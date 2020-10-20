@@ -1,0 +1,11 @@
+{
+  "id": null,
+  "name" : "dsfjgksdfg",
+  "ean" : "12334234",
+  "nutrition" : {
+    "energy": 12,
+    "carbohydrate": 12,
+    "protein": 12,
+    "fat": 12
+  }
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="TOKEN">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2MDI0NDEzMzAsInVzZXIiOiJ0ZXN0QGV4YW1wbGUuY29tIn0.4PYB_RhR4Iu8UPPvyyuVUL91Keju8Wzeomeku3Ao4_c</string>
+    <string name="USER_ID">test@example.com</string>
+    <string name="BASE_URL">https://backend.nilswilhelm.net/</string>
+</resources>
