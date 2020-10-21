@@ -27,17 +27,21 @@ import net.nilswilhelm.foodtracker.auth.AuthHandler
 import net.nilswilhelm.foodtracker.data.AuthData
 import net.nilswilhelm.foodtracker.data.Intake
 import net.nilswilhelm.foodtracker.data.Transaction
+import net.nilswilhelm.foodtracker.utils.RecyclerItemCLickListener
+import net.nilswilhelm.foodtracker.utils.Utils
+import net.nilswilhelm.foodtracker.utils.Utils.Companion.delete
 import net.nilswilhelm.foodtracker.utils.Utils.Companion.getData
 import okhttp3.*
 import java.io.IOException
 
 
-class DashboardFragment : Fragment(), Callback {
+class DashboardFragment : Fragment(), Callback, RecyclerItemCLickListener.OnRecyclerClickListener, Utils.Companion.OnDeleteListener {
 
 
     private lateinit var dashboardViewModel: DashboardViewModel
     var transactions = ArrayList<Transaction>()
     private val foodRecyclerViewAdapterTransaction = TransactionRecyclerViewAdapter(ArrayList())
+    private val TAG = "DashboardFragment"
 
 
     override fun onCreateView(
@@ -56,6 +60,7 @@ class DashboardFragment : Fragment(), Callback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         transaction_recycler_view.layoutManager = LinearLayoutManager(requireContext())
+        transaction_recycler_view.addOnItemTouchListener(RecyclerItemCLickListener(requireContext(), transaction_recycler_view, this))
         transaction_recycler_view.adapter = foodRecyclerViewAdapterTransaction
         transaction_recycler_view.isNestedScrollingEnabled = false;
     }
@@ -196,11 +201,16 @@ class DashboardFragment : Fragment(), Callback {
                 }
             } else {
                 val resString = response.body!!.string()
+                Log.d(TAG, resString)
+
 
                 val gson = Gson()
                 val itemType = object : TypeToken<ArrayList<Transaction>>() {}.type
-                transactions = gson.fromJson<ArrayList<Transaction>>(resString, itemType)
-
+                try {
+                    transactions = gson.fromJson<ArrayList<Transaction>>(resString, itemType)
+                } catch (e: IllegalStateException) {
+                    transactions.clear()
+                }
                 Log.d("Cool", transactions.toString())
                 activity?.runOnUiThread {
                     foodRecyclerViewAdapterTransaction.loadNewData(transactions)
@@ -209,6 +219,30 @@ class DashboardFragment : Fragment(), Callback {
             }
 
 
+        }
+    }
+
+    override fun onItemClick(view: View, position: Int) {
+        Toast.makeText(requireContext(), "Hold to delete", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onItemLongClick(view: View, position: Int) {
+        val transaction = foodRecyclerViewAdapterTransaction.getFood(position)
+        if (transaction != null){
+            delete(requireContext(), "https://backend.nilswilhelm.net/intake/" + transaction.id, this)
+        }
+    }
+
+    override fun onDeleted(responseMessage: String) {
+//        Toast.makeText(requireContext(), responseMessage, Toast.LENGTH_SHORT).show()
+        getData(requireContext(), getString(R.string.BASE_URL) + "transactions/{bla}", this)
+        fetchData(getString(R.string.BASE_URL) + "intake")
+
+    }
+
+    override fun onDeleteFailed(errorMessage: String) {
+        activity?.runOnUiThread{
+            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
 
