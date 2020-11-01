@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <ProgressBar
+            android:id="@+id/progress_protein_bar"
+            android:layout_width="100dp"
+
+            android:layout_height="100dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            android:indeterminateOnly="false"
+            android:progressDrawable="@drawable/circle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:progress="70" />
+
+
+    <TextView
+        android:id="@+id/progress_protein_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/progress_protein_bar"
+        app:layout_constraintEnd_toEndOf="@+id/progress_protein_bar"
+        app:layout_constraintStart_toStartOf="@+id/progress_protein_bar"
+        app:layout_constraintTop_toTopOf="@+id/progress_protein_bar"
+        tools:text="160/210">
+
+    </TextView>
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Protein"
+            app:layout_constraintEnd_toEndOf="@+id/progress_protein_bar"
+            app:layout_constraintStart_toStartOf="@+id/progress_protein_bar"
+            app:layout_constraintTop_toBottomOf="@+id/progress_protein_bar"
+            tools:text="Protein" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <ProgressBar
+            android:id="@+id/progress_carbohydrate_bar"
+            android:layout_width="100dp"
+
+            android:layout_height="100dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            android:indeterminateOnly="false"
+            android:progressDrawable="@drawable/circle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:progress="70" />
+
+
+        <TextView
+            android:id="@+id/progress_carbohydrate_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/progress_carbohydrate_bar"
+            app:layout_constraintEnd_toEndOf="@+id/progress_carbohydrate_bar"
+            app:layout_constraintStart_toStartOf="@+id/progress_carbohydrate_bar"
+            app:layout_constraintTop_toTopOf="@+id/progress_carbohydrate_bar"
+            tools:text="160/210">
+
+        </TextView>
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Carbohydrate"
+            app:layout_constraintEnd_toEndOf="@+id/progress_carbohydrate_bar"
+            app:layout_constraintStart_toStartOf="@+id/progress_carbohydrate_bar"
+            app:layout_constraintTop_toBottomOf="@+id/progress_carbohydrate_bar" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <ProgressBar
+            android:id="@+id/progress_fat_bar"
+            android:layout_width="100dp"
+
+            android:layout_height="100dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            android:indeterminateOnly="false"
+            android:progressDrawable="@drawable/circle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:progress="70" />
+
+
+        <TextView
+            android:id="@+id/progress_fat_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/progress_fat_bar"
+            app:layout_constraintEnd_toEndOf="@+id/progress_fat_bar"
+            app:layout_constraintStart_toStartOf="@+id/progress_fat_bar"
+            app:layout_constraintTop_toTopOf="@+id/progress_fat_bar"
+            tools:text="160/210">
+
+        </TextView>
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Fat"
+            app:layout_constraintEnd_toEndOf="@+id/progress_fat_bar"
+            app:layout_constraintStart_toStartOf="@+id/progress_fat_bar"
+            app:layout_constraintTop_toBottomOf="@+id/progress_fat_bar" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</LinearLayout>

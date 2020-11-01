@@ -19,13 +19,13 @@ enum class DownloadStatus {
     OK, IDLE, NOT_INITIALISED, FAILED_OR_EMPTY, PERMISSIONS_ERROR, ERROR
 }
 
-class DataFetcher(private val listener: OnDownloadComplete, private val context: Context) {
+class DataFetcher<T>(private val listener: OnDownloadComplete<T>, private val context: Context) {
 
     private val TAG = "DataFetcher"
     private var downloadStatus = DownloadStatus.IDLE
 
-    interface OnDownloadComplete {
-        fun onDownloadComplete(data: String, status: DownloadStatus)
+    interface OnDownloadComplete<T> {
+        fun onDownloadComplete(data: T, status: DownloadStatus)
         fun onDownloadError(errorMessage: String, status: DownloadStatus)
     }
 

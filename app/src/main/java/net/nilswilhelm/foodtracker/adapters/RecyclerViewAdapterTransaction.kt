@@ -11,6 +11,8 @@ import net.nilswilhelm.foodtracker.data.Transaction
 
 class TransactionViewHolder(view: View) : RecyclerView.ViewHolder(view){
     val foodname: TextView = view.findViewById(R.id.transaction_foodname)
+    val amount: TextView = view.findViewById(R.id.transaction_amount)
+    val energy: TextView = view.findViewById(R.id.transaction_energy)
 
 }
 
@@ -42,6 +44,8 @@ class TransactionRecyclerViewAdapter(private var transactions: List<Transaction>
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         // Called by the layout manager when it wants new data in existing view
         val transaction = transactions[position]
-        holder.foodname.text = transaction.foodName + "(${transaction.amount}g)${transaction.nutrition.energy.toString()}kcal"
+        holder.foodname.text = transaction.foodName
+        holder.amount.text = "%dg".format(transaction.amount.toInt())
+        holder.energy.text = "%dkcal".format(transaction.nutrition.energy.toInt())
     }
 }

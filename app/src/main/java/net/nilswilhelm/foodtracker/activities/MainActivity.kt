@@ -11,22 +11,21 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.github.mikephil.charting.charts.PieChart
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
 import net.nilswilhelm.foodtracker.R
 import net.nilswilhelm.foodtracker.auth.AuthHandler
 import net.nilswilhelm.foodtracker.data.Food
+import net.nilswilhelm.foodtracker.dialogs.FoodNotFoundDialog
+import net.nilswilhelm.foodtracker.dialogs.MealOrFoodDialog
 import net.nilswilhelm.foodtracker.utils.Utils
 import okhttp3.*
 import java.io.IOException
 
-class MainActivity : BaseActivity(), Callback {
+class MainActivity : BaseActivity(), Callback{
 
     private var TAG = "MainActivity"
-    private var pieChart: PieChart? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +42,10 @@ class MainActivity : BaseActivity(), Callback {
             intentIntegrator.setCameraId(0)
             intentIntegrator.setPrompt("SCAN")
             intentIntegrator.setBarcodeImageEnabled(true)
-            intentIntegrator.initiateScan()
+            intentIntegrator.captureActivity = CaptureActivityPortrait::class.java
             intentIntegrator.setOrientationLocked(true)
+            intentIntegrator.initiateScan()
+
         }
 
         val navController = findNavController(R.id.nav_host_fragment)
@@ -68,29 +69,20 @@ class MainActivity : BaseActivity(), Callback {
                 startActivity(Intent(this, SearchActivity::class.java))
                 true
             }
+            R.id.add_button -> {
+                MealOrFoodDialog(this).show(this.supportFragmentManager, "")
+                true
+            }
+            R.id.goals_button -> {
+                startActivity(Intent(this, EditGoals::class.java))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
-
-        // Get the SearchView and set the searchable configuration
-        val searchItem = menu.findItem(R.id.search)
-//        val searchView = searchItem?.actionView as SearchView
-//
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-////                getFoodByEAN("4353466")
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-////                doMySearch(newText!!)
-//                return false
-//            }
-//        })
-
         return true
     }
 
@@ -124,6 +116,9 @@ class MainActivity : BaseActivity(), Callback {
         Log.d(TAG, "onResponse()")
         response.use {
             if (!response.isSuccessful) {
+                if(response.code == 404){
+                    FoodNotFoundDialog(this).show(this.supportFragmentManager, "")
+                }
                 runOnUiThread {
                     Toast.makeText(this@MainActivity, "Response Failed", Toast.LENGTH_SHORT)
                         .show()
