@@ -12,11 +12,6 @@ class Nutrition(
 ) : Parcelable{
 
     override fun toString(): String {
-        return """
-            energy: $energy
-            carbohydrate: $carbohydrate
-            protein: $protein
-            fat: $fat
-            """.trimIndent()
+        return "Nutrition(energy=${energy.toInt()}, carbohydrate=${carbohydrate.toInt()}, protein=${protein.toInt()}, fat=${fat.toInt()})"
     }
 }

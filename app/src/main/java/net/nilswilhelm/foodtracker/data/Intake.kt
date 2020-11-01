@@ -5,12 +5,8 @@ import kotlinx.android.parcel.Parcelize
 import java.util.*
 @Parcelize
 class Intake(var date: Date, var nutrition: Nutrition) : Parcelable {
-
     override fun toString(): String {
-        return """
-            date: $date
-            nutrition: $nutrition
-            """.trimIndent()
+        return "Intake(date=$date, nutrition=${nutrition})"
     }
 }
 

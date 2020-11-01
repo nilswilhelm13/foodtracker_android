@@ -1,20 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="50dp"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_margin="5dp">
 
     <View
         android:id="@+id/bar_entry_bar"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@drawable/bar"
+        android:background="@drawable/bar_energy"
         app:layout_constraintBottom_toTopOf="@+id/bar_entry_day"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        app:layout_constraintBottom_toBottomOf="@+id/bar_entry_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/bar_entry_carbohydrate"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:background="@drawable/bar_carbohydrate" />
+
+        <View
+            android:id="@+id/bar_entry_fat"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:background="@drawable/bar_fat" />
+
+        <View
+            android:id="@+id/bar_entry_protein"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:background="@drawable/bar_protein" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/bar_entry_day"

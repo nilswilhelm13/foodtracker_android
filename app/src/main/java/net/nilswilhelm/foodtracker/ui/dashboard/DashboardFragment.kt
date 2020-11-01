@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -25,7 +26,7 @@ import net.nilswilhelm.foodtracker.data.Intake
 import net.nilswilhelm.foodtracker.utils.RecyclerItemCLickListener
 import net.nilswilhelm.foodtracker.utils.Utils
 import net.nilswilhelm.foodtracker.utils.Utils.Companion.delete
-
+import okhttp3.internal.toHexString
 
 
 class DashboardFragment : Fragment(), RecyclerItemCLickListener.OnRecyclerClickListener,
@@ -42,10 +43,8 @@ class DashboardFragment : Fragment(), RecyclerItemCLickListener.OnRecyclerClickL
         savedInstanceState: Bundle?
     ): View? {
 
-        initViewModel()
-        val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
-        viewModel.fetchData(getString(R.string.BASE_URL) + "dashboard", requireContext())
 
+        val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         return root
     }
 
@@ -81,6 +80,8 @@ class DashboardFragment : Fragment(), RecyclerItemCLickListener.OnRecyclerClickL
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initViewModel()
+        viewModel.fetchData(getString(R.string.BASE_URL) + "dashboard", requireContext())
         transaction_recycler_view.layoutManager = LinearLayoutManager(requireContext())
         transaction_recycler_view.addOnItemTouchListener(
             RecyclerItemCLickListener(
@@ -104,7 +105,7 @@ class DashboardFragment : Fragment(), RecyclerItemCLickListener.OnRecyclerClickL
         pieChart?.dragDecelerationFrictionCoef = 0.95f
 
         pieChart?.isDrawHoleEnabled = true
-        pieChart?.setHoleColor(Color.parseColor("#8cf188"))
+        pieChart?.setHoleColor(Color.parseColor(getColorString(R.color.colorEnergy)))
 
         pieChart?.setTransparentCircleColor(Color.WHITE)
         pieChart?.setTransparentCircleAlpha(300)
@@ -138,9 +139,9 @@ class DashboardFragment : Fragment(), RecyclerItemCLickListener.OnRecyclerClickL
 
         // colors
         pieDataSet.setColors(
-            Color.parseColor("#f09263"),
-            Color.parseColor("#59bdc6"),
-            Color.parseColor("#e9e795")
+            Color.parseColor(getColorString(R.color.colorProtein)),
+            Color.parseColor(getColorString(R.color.colorFat)),
+            Color.parseColor(getColorString(R.color.colorCarbohydrate))
         )
         pieDataSet.sliceSpace = 3f
         pieDataSet.iconsOffset = MPPointF(0F, 40F)
@@ -184,5 +185,9 @@ class DashboardFragment : Fragment(), RecyclerItemCLickListener.OnRecyclerClickL
         activity?.runOnUiThread {
             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun getColorString(id: Int): String{
+        return "#" + Integer.toHexString(ContextCompat.getColor(requireContext(), id))
     }
 }
