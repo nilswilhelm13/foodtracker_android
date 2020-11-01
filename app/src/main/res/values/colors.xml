@@ -10,8 +10,8 @@
     <color name="colorIcons">#212121</color>
     <color name="colorDivider">#BDBDBD</color>
 
-    <color name="colorEnergy">#8BC34A</color>
-    <color name="colorCarbohydrate">#e9e795</color>
-    <color name="colorProtein">#f09263</color>
-    <color name="colorFat">#59bdc6</color>
+    <color name="colorEnergy">#aae169</color>
+    <color name="colorCarbohydrate">#FFE169</color>
+    <color name="colorProtein">#84ffed</color>
+    <color name="colorFat">#FF9669</color>
 </resources>

@@ -1,6 +1,9 @@
 package net.nilswilhelm.foodtracker.ui.home
 
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.Log
+import android.view.Display
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,12 +22,9 @@ import net.nilswilhelm.foodtracker.data.Intake
 class HistoryFragment : Fragment() {
 
     private lateinit var viewModel: HistoryViewModel
-    private val adapter = BarChartAdapter(ArrayList(), object : BarChartClickListener{
-        override fun onItemClick(intake: Intake) {
-            showIntakeDetails(intake)
-        }
-
-    })
+    private var adapter: BarChartAdapter? = null
+    private val TAG = "HistoryFragment"
+    private var height = 0
 
     val list = ArrayList<Intake>()
     override fun onCreateView(
@@ -39,6 +39,13 @@ class HistoryFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        adapter = BarChartAdapter(ArrayList(), object : BarChartClickListener{
+            override fun onItemClick(intake: Intake) {
+                showIntakeDetails(intake)
+            }
+
+        }, requireActivity().windowManager?.defaultDisplay?.height!!)
         super.onViewCreated(view, savedInstanceState)
         barchart.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -46,13 +53,15 @@ class HistoryFragment : Fragment() {
 
         initViewModel()
         viewModel.fetchData(requireContext())
+
+
     }
 
     private fun initViewModel() {
         viewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
         viewModel.data().observe(requireActivity(), Observer {
             if (it != null) {
-                adapter.loadNewData(it)
+                adapter?.loadNewData(it)
             }
         })
         viewModel.errorMessage().observe(requireActivity(), Observer {
