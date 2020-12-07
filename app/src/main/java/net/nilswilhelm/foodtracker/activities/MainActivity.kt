@@ -33,21 +33,6 @@ class MainActivity : BaseActivity(), Callback{
         setContentView(R.layout.activity_main)
         AuthHandler.autoAuth(this)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
-        val floatingActionButton = findViewById<FloatingActionButton>(R.id.floatingActionButton)
-
-
-
-        floatingActionButton.setOnClickListener {
-            val intentIntegrator = IntentIntegrator(this)
-            intentIntegrator.setBeepEnabled(false)
-            intentIntegrator.setCameraId(0)
-            intentIntegrator.setPrompt("SCAN")
-            intentIntegrator.setBarcodeImageEnabled(true)
-            intentIntegrator.captureActivity = CaptureActivityPortrait::class.java
-            intentIntegrator.setOrientationLocked(true)
-            intentIntegrator.initiateScan()
-
-        }
 
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
@@ -76,6 +61,17 @@ class MainActivity : BaseActivity(), Callback{
             }
             R.id.goals_button -> {
                 startActivity(Intent(this, EditGoals::class.java))
+                true
+            }
+            R.id.scan -> {
+                val intentIntegrator = IntentIntegrator(this)
+                intentIntegrator.setBeepEnabled(false)
+                intentIntegrator.setCameraId(0)
+                intentIntegrator.setPrompt("SCAN")
+                intentIntegrator.setBarcodeImageEnabled(true)
+                intentIntegrator.captureActivity = CaptureActivityPortrait::class.java
+                intentIntegrator.setOrientationLocked(true)
+                intentIntegrator.initiateScan()
                 true
             }
             else -> super.onOptionsItemSelected(item)

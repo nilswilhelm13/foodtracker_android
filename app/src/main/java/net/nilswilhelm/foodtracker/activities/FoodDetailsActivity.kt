@@ -48,6 +48,20 @@ class FoodDetailsActivity : BaseActivity(), Callback {
         food_carbohydrate.text = food?.nutrition?.carbohydrate.toString() + "g"
         food_protein.text = food?.nutrition?.protein.toString() + "g"
         food_fat.text = food?.nutrition?.fat.toString() + "g"
+        if (food?.meta_fields != null) {
+            food_meta_fields.visibility = View.VISIBLE
+            var meta_fields = ""
+            food?.meta_fields?.forEach {
+                meta_fields += it
+                meta_fields += "\n"
+            }
+            food_meta_fields.setText(meta_fields)
+        } else {
+            food_meta_fields_label.setText("")
+            food_meta_fields.visibility = View.GONE
+        }
+
+
 
         food_button.setOnClickListener {
 

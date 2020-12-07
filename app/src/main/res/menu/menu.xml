@@ -7,13 +7,18 @@
         android:title="Search"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/add_button"
-        android:icon="@drawable/ic_baseline_add_circle_24"
-        android:title="Code"
-        app:showAsAction="collapseActionView|ifRoom" />
+        android:id="@+id/scan"
+        android:title="Scan"
+        android:icon="@drawable/ic_qr_code_scanner_24px"
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/goals_button"
         android:icon="@drawable/ic_baseline_outlined_flag_24"
         android:title="Goals"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/add_button"
+        android:icon="@drawable/ic_baseline_add_circle_24"
+        android:title="Create"
+        app:showAsAction="collapseActionView|ifRoom" />
 </menu>

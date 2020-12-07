@@ -12,5 +12,6 @@ class Food(
     var ean: String? = null,
     var id: String? = null,
     var userId: String? = null,
-    var ingredients: Array<Ingredient>? = null
+    var ingredients: Array<Ingredient>? = null,
+    var meta_fields: Map<String, String>? = null
     ) : Parcelable

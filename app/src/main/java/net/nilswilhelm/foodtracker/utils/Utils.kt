@@ -25,7 +25,7 @@ class Utils {
             getData(context, url, listener)
         }
 
-        fun getData(context: Context, url: String, listener: Callback) {
+        private fun getData(context: Context, url: String, listener: Callback) {
             val authData: AuthData = AuthHandler.getAuthData(context)
             val client = OkHttpClient()
             val request = Request.Builder()
