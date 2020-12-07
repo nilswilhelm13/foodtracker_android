@@ -170,11 +170,6 @@ class DashboardFragment : Fragment(), RecyclerItemCLickListener.OnRecyclerClickL
         val transaction = foodRecyclerViewAdapterTransaction.getFood(position)
         if (transaction != null) {
             DeleteTransactionDialog(this, transaction.id).show(requireActivity().supportFragmentManager, "")
-//            delete(
-//                requireContext(),
-//                "https://backend.nilswilhelm.net/intake/" + transaction.id,
-//                this
-//            )
         }
     }
 
