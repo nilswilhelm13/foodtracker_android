@@ -97,11 +97,15 @@ class SearchActivity : BaseActivity(), Callback, RecyclerItemCLickListener.OnRec
 
     override fun onItemClick(view: View, position: Int) {
         Log.d(TAG, ".onItemClick: starts")
-        Toast.makeText(this, "Normal tap at position $position", Toast.LENGTH_SHORT).show()
+        loadFood(position)
     }
 
     override fun onItemLongClick(view: View, position: Int) {
         Log.d(TAG, ".onItemLongClick: starts")
+        loadFood(position)
+    }
+
+    fun loadFood(position: Int) {
         val food = foodRecyclerViewAdapter.getFood(position)
         if (food != null){
             val intent = Intent(this, FoodDetailsActivity::class.java)
