@@ -19,6 +19,7 @@ class BarChartViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val carbohydrate: View = view.findViewById(R.id.bar_entry_carbohydrate)
     val protein: View = view.findViewById(R.id.bar_entry_protein)
     val fat: View = view.findViewById(R.id.bar_entry_fat)
+    val energyValue: TextView = view.findViewById(R.id.energy_value)
 }
 
 class BarChartAdapter(private var list: List<Intake>, private val listener: BarChartClickListener, private val height: Int) :
@@ -72,6 +73,7 @@ class BarChartAdapter(private var list: List<Intake>, private val listener: BarC
 //        val formatter = android.text.format.DateFormat.format("EEE, d MMM", intake.date)
         val formatter = android.text.format.DateFormat.format("EEE", intake.date)
         holder.day.text = formatter
+        holder.energyValue.setText(intake.nutrition.energy.toInt().toString())
         holder.itemView.setOnClickListener {
             listener.onItemClick(intake)
         }

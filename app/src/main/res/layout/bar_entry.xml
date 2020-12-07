@@ -7,6 +7,16 @@
     android:layout_height="match_parent"
     android:layout_margin="5dp">
 
+    <TextView
+        android:id="@+id/energy_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3452"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/bar_entry_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <View
         android:id="@+id/bar_entry_bar"
         android:layout_width="match_parent"
