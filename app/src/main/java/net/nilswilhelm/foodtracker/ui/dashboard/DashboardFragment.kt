@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.progress_bars.*
 import net.nilswilhelm.foodtracker.R
 import net.nilswilhelm.foodtracker.adapters.TransactionRecyclerViewAdapter
 import net.nilswilhelm.foodtracker.data.Intake
+import net.nilswilhelm.foodtracker.dialogs.DeleteTransactionDialog
 import net.nilswilhelm.foodtracker.utils.RecyclerItemCLickListener
 import net.nilswilhelm.foodtracker.utils.Utils
 import net.nilswilhelm.foodtracker.utils.Utils.Companion.delete
@@ -168,11 +169,12 @@ class DashboardFragment : Fragment(), RecyclerItemCLickListener.OnRecyclerClickL
     override fun onItemLongClick(view: View, position: Int) {
         val transaction = foodRecyclerViewAdapterTransaction.getFood(position)
         if (transaction != null) {
-            delete(
-                requireContext(),
-                "https://backend.nilswilhelm.net/intake/" + transaction.id,
-                this
-            )
+            DeleteTransactionDialog(this, transaction.id).show(requireActivity().supportFragmentManager, "")
+//            delete(
+//                requireContext(),
+//                "https://backend.nilswilhelm.net/intake/" + transaction.id,
+//                this
+//            )
         }
     }
 
