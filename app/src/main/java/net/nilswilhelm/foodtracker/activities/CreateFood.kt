@@ -11,17 +11,20 @@ import kotlinx.android.synthetic.main.activity_create_food.*
 import net.nilswilhelm.foodtracker.R
 import net.nilswilhelm.foodtracker.auth.AuthHandler
 import net.nilswilhelm.foodtracker.data.Food
+import net.nilswilhelm.foodtracker.data.Ingredient
 import net.nilswilhelm.foodtracker.data.Nutrition
 import net.nilswilhelm.foodtracker.utils.Utils
 import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 
+internal const val EAN_TRANSFER = "EAN_TRANSFER"
+
 class CreateFood : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_food)
-
+        checkIntendExtras()
         setListerners()
     }
 
@@ -121,6 +124,13 @@ class CreateFood : AppCompatActivity() {
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+    private fun checkIntendExtras() {
+        if (intent.hasExtra(EAN_TRANSFER)) {
+            val ean = intent.getStringExtra(EAN_TRANSFER)
+            create_food_ean.setText(ean)
         }
     }
 

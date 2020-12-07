@@ -2,14 +2,14 @@ package net.nilswilhelm.foodtracker.dialogs
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import net.nilswilhelm.foodtracker.activities.CreateFood
+import net.nilswilhelm.foodtracker.activities.EAN_TRANSFER
 
-class FoodNotFoundDialog(context: Context) : DialogFragment() {
+class FoodNotFoundDialog(private val ean: String) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
@@ -18,7 +18,9 @@ class FoodNotFoundDialog(context: Context) : DialogFragment() {
             builder.setMessage("Food does not exist. Do you want to create it?")
                 .setPositiveButton("Create",
                     DialogInterface.OnClickListener { dialog, id ->
-                       startActivity(Intent(context, CreateFood::class.java))
+                        val intent = Intent(context, CreateFood::class.java)
+                        intent.putExtra(EAN_TRANSFER, ean)
+                        startActivity(intent)
                     })
                 .setNegativeButton("Cancel"
                 ) { dialog, id ->

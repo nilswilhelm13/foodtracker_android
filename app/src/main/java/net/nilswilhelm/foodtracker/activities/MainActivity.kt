@@ -26,6 +26,7 @@ import java.io.IOException
 class MainActivity : BaseActivity(), Callback{
 
     private var TAG = "MainActivity"
+    private var ean = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,7 +101,8 @@ class MainActivity : BaseActivity(), Callback{
 //                Toast.makeText(this, "Scanned -> " + result.contents, Toast.LENGTH_SHORT)
 //                    .show()
                 Log.d(TAG, result.contents)
-                Utils.getFoodByEAN(this, result.contents, this)
+                ean = result.contents
+                Utils.getFoodByEAN(this, ean, this)
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
@@ -117,7 +119,7 @@ class MainActivity : BaseActivity(), Callback{
         response.use {
             if (!response.isSuccessful) {
                 if(response.code == 404){
-                    FoodNotFoundDialog(this).show(this.supportFragmentManager, "")
+                    FoodNotFoundDialog(ean).show(this.supportFragmentManager, "")
                 }
                 runOnUiThread {
                     Toast.makeText(this@MainActivity, "Response Failed", Toast.LENGTH_SHORT)
