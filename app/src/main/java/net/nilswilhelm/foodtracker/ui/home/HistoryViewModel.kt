@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import net.nilswilhelm.foodtracker.R
-import net.nilswilhelm.foodtracker.adapters.FoodListAdapter
 import net.nilswilhelm.foodtracker.auth.AuthHandler
 import net.nilswilhelm.foodtracker.data.Intake
 import okhttp3.*
@@ -28,13 +27,13 @@ class HistoryViewModel : ViewModel() {
     }
 
 
-    fun fetchData(context: Context) {
+    fun fetchData(context: Context, skip: Int, limit: Int) {
 
         val authData = AuthHandler.getAuthData(context)
 
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url(context.getString(R.string.BASE_URL) + "history")
+            .url(context.getString(R.string.BASE_URL) + "history?skip=${skip}&limit=${limit}")
             .addHeader(
                 "Authorization",
                 authData.token
@@ -63,10 +62,13 @@ class HistoryViewModel : ViewModel() {
                         val data = gson.fromJson<ArrayList<Intake>>(resString, itemType)
 
                         if (data != null) {
-
-                            _data.postValue(data)
-
-
+                            val current =_data.value
+                            val empty = ArrayList<Intake>()
+                            if (current != null) {
+                                    empty.addAll(current as ArrayList<Intake>)
+                            }
+                            empty.addAll(data as ArrayList<Intake>)
+                            _data.postValue(empty)
                         }
                     }
                 }

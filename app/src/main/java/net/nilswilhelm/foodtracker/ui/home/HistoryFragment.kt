@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import net.nilswilhelm.foodtracker.R
 import net.nilswilhelm.foodtracker.adapters.BarChartAdapter
 import net.nilswilhelm.foodtracker.adapters.BarChartClickListener
+import net.nilswilhelm.foodtracker.adapters.PaginationScrollListener
 import net.nilswilhelm.foodtracker.data.Intake
 
 
@@ -51,9 +52,28 @@ class HistoryFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, true)
         barchart.adapter = adapter
 
-        initViewModel()
-        viewModel.fetchData(requireContext())
+        var isLastPage: Boolean = false
+        var isLoading: Boolean = false
+        var skip = 0
+        barchart.addOnScrollListener(object : PaginationScrollListener(barchart.layoutManager as LinearLayoutManager){
+            override fun isLastPage(): Boolean {
+                return isLastPage
+            }
 
+            override fun isLoading(): Boolean {
+               return isLoading
+            }
+
+            override fun loadMoreItems() {
+                skip += 7
+                viewModel.fetchData(requireContext(), skip,7)
+                isLoading = false
+            }
+
+        })
+
+        initViewModel()
+        viewModel.fetchData(requireContext(), 0, 7)
 
     }
 
