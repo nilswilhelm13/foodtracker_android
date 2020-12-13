@@ -48,7 +48,7 @@ class HistoryFragment : Fragment() {
         }, requireActivity().windowManager?.defaultDisplay?.height!!)
         super.onViewCreated(view, savedInstanceState)
         barchart.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, true)
         barchart.adapter = adapter
 
         initViewModel()
