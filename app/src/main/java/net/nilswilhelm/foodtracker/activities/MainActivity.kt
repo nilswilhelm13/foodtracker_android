@@ -1,17 +1,22 @@
 package net.nilswilhelm.foodtracker.activities
 
+import android.app.AlarmManager
+import android.app.Notification
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.core.app.NotificationCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
 import net.nilswilhelm.foodtracker.R
@@ -20,8 +25,11 @@ import net.nilswilhelm.foodtracker.data.Food
 import net.nilswilhelm.foodtracker.dialogs.FoodNotFoundDialog
 import net.nilswilhelm.foodtracker.dialogs.MealOrFoodDialog
 import net.nilswilhelm.foodtracker.utils.Utils
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
 import java.io.IOException
+
 
 class MainActivity : BaseActivity(), Callback{
 
@@ -135,8 +143,4 @@ class MainActivity : BaseActivity(), Callback{
             }
         }
     }
-
-
-
-
 }
