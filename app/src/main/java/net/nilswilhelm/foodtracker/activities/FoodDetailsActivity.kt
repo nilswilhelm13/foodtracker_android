@@ -1,33 +1,24 @@
 package net.nilswilhelm.foodtracker.activities
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.addTextChangedListener
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.internal.GsonBuildConfig
 import kotlinx.android.synthetic.main.content_food_details.*
 import net.nilswilhelm.foodtracker.R
 import net.nilswilhelm.foodtracker.auth.AuthHandler
-import net.nilswilhelm.foodtracker.data.AuthData
-import net.nilswilhelm.foodtracker.data.Eat
-import net.nilswilhelm.foodtracker.data.Food
-import net.nilswilhelm.foodtracker.data.Transaction
+import net.nilswilhelm.foodtracker.data.*
 import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import java.lang.System.out
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
+internal const val TEMPLATE_TRANSFER = "TEMPLATE_TRANSFER"
 
 class FoodDetailsActivity : BaseActivity(), Callback {
 
@@ -42,7 +33,6 @@ class FoodDetailsActivity : BaseActivity(), Callback {
 
 
         food = intent.getParcelableExtra<Food>(FOOD_TRANSFER) as Food
-
         food_name.text = food?.name
         food_energy.text = food?.nutrition?.energy.toString() + "kcal"
         food_carbohydrate.text = food?.nutrition?.carbohydrate.toString() + "g"
@@ -59,14 +49,55 @@ class FoodDetailsActivity : BaseActivity(), Callback {
         } else {
             food_meta_fields_label.setText(" ")
         }
+        if (!food?.isMeal!!){
+            hideMealFields()
+        }
         food_meta_fields.text = meta_fields
 
+        food_actual.addTextChangedListener {
+            try {
+                updateAmount()
+            } catch (e: Exception){
 
+            }
+
+        }
+        food_total.addTextChangedListener {
+            try {
+                updateAmount()
+            } catch (e: Exception){
+
+            }
+        }
 
         food_button.setOnClickListener {
-
             postFood()
         }
+        load_as_template.setOnClickListener {
+            loadTemplate()
+        }
+    }
+    private fun hideMealFields(){
+        food_actual_label.visibility = View.GONE
+        food_actual.visibility = View.GONE
+        food_total_label.visibility = View.GONE
+        food_total.visibility = View.GONE
+        load_as_template.visibility = View.GONE
+    }
+
+    private fun updateAmount(){
+        food_amount.setText(relativeAmount().toString())
+    }
+
+    private fun relativeAmount(): Double{
+        val total = food_total.text.toString().toDouble()
+        val factor = totalOfIngredients() / total
+        val actual = food_actual.text.toString().toDouble()
+        return actual * factor
+    }
+
+    private fun totalOfIngredients(): Double{
+        return food?.ingredients!!.fold(0.0) { acc, ingredient -> acc + ingredient.amount }
     }
 
     private fun postFood() {
@@ -119,5 +150,14 @@ class FoodDetailsActivity : BaseActivity(), Callback {
 
     fun dateString(date: Date): String {
         return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(date) + "Z"
+    }
+
+    fun loadTemplate(){
+
+        val data = Gson().toJson(food?.ingredients?.toList())
+        val intent = Intent(this, CreateMeal::class.java)
+        Log.d(TAG, food?.ingredients.toString())
+        intent.putExtra(TEMPLATE_TRANSFER, data)
+        startActivity(intent)
     }
 }

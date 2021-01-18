@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.zxing.integration.android.IntentIntegrator
+import kotlinx.android.synthetic.main.activity_create_food.*
 import kotlinx.android.synthetic.main.activity_create_meal.*
 import net.nilswilhelm.foodtracker.R
-import net.nilswilhelm.foodtracker.adapters.FoodListAdapter
 import net.nilswilhelm.foodtracker.adapters.IngredientAdapter
 import net.nilswilhelm.foodtracker.adapters.OnDeleteButtonPressed
 import net.nilswilhelm.foodtracker.adapters.OnEditTextChanged
@@ -25,8 +25,10 @@ import net.nilswilhelm.foodtracker.data.Food
 import net.nilswilhelm.foodtracker.data.Ingredient
 import net.nilswilhelm.foodtracker.data.Nutrition
 import okhttp3.*
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.lang.Exception
+import java.lang.IndexOutOfBoundsException
 import java.lang.NumberFormatException
 
 const val INGREDIENT_LIST = "ingredients"
@@ -45,7 +47,7 @@ class CreateMeal : AppCompatActivity(), OnEditTextChanged, OnDeleteButtonPressed
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_meal)
         nutrition = Nutrition(0.0, 0.0, 0.0, 0.0)
-        loadIngredients()
+        loadIngredientsFromSharedPrefs()
         checkIntendExtras()
         initRecyclerView()
         updateNutritionView()
@@ -69,15 +71,28 @@ class CreateMeal : AppCompatActivity(), OnEditTextChanged, OnDeleteButtonPressed
     private fun checkIntendExtras() {
         if (intent.hasExtra(FOOD_TRANSFER)) {
             val food = intent.getParcelableExtra<Food>(FOOD_TRANSFER) as Food
-            if (!idAlreadyInIngredients(food)){
+            if (!isAlreadyInIngredients(food)) {
                 val ingredient = Ingredient(food, 0.0)
                 ingredients.add(ingredient)
             }
+        }
+        if (intent.hasExtra(TEMPLATE_TRANSFER)) {
+            val ingredientsJSON =
+                intent.getStringExtra(TEMPLATE_TRANSFER)
+            val itemType = object : TypeToken<ArrayList<Ingredient>>() {}.type
+            try {
+                ingredients = Gson().fromJson<ArrayList<Ingredient>>(ingredientsJSON, itemType)
+            } catch (e: Exception) {
+            }
+            Log.d(TAG +" Size", ingredients.size.toString())
+            ingredientAdapter.loadNewData(ingredients)
+
+
 
         }
     }
 
-    private fun loadIngredients() {
+    private fun loadIngredientsFromSharedPrefs() {
         val sharedPref: SharedPreferences =
             getSharedPreferences("FOODTRACKER", Context.MODE_PRIVATE)
         val ingredientsJSON = sharedPref.getString(INGREDIENT_LIST, "")
@@ -139,97 +154,9 @@ class CreateMeal : AppCompatActivity(), OnEditTextChanged, OnDeleteButtonPressed
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_create_meal, menu)
-
-        // Get the SearchView and set the searchable configuration
-//        val searchItem = menu.findItem(R.id.search)
-//        val searchView = searchItem?.actionView as SearchView
-//
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                getFoodByEAN("4353466")
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                doMySearch(newText!!)
-//                return false
-//            }
-//        })
-
         return true
     }
 
-    fun doMySearch(query: String) {
-        Log.d(TAG, "doMySearch()")
-        val authData = AuthHandler.getAuthData(this)
-        Log.d(TAG, authData.token)
-        Log.d(TAG, "Hallo")
-        val client = OkHttpClient()
-        val request = Request.Builder()
-            .url(getString(R.string.BASE_URL) + "search/" + query)
-            .addHeader(
-                "Authorization",
-                authData.token
-            )
-            .addHeader("userId", authData.userId)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.d(TAG, "onFailure()")
-                e.printStackTrace()
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                Log.d(TAG, "onResponse()")
-                response.use {
-
-                    if (!response.isSuccessful) {
-                        runOnUiThread {
-                            Toast.makeText(this@CreateMeal, "Response Failed", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    } else {
-                        val resString = response.body!!.string()
-
-                        val gson = Gson()
-                        val itemType = object : TypeToken<ArrayList<Food>>() {}.type
-                        val searchResults = gson.fromJson<ArrayList<Food>>(resString, itemType)
-
-                        if (searchResults != null) {
-
-                            foodList = searchResults
-
-                            runOnUiThread {
-                                val adapter = FoodListAdapter(
-                                    this@CreateMeal,
-                                    R.layout.item,
-                                    searchResults
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        })
-    }
-
-    fun calculateNutrition() {
-        var energy = 0.0
-        var carbohydrate = 0.0
-        var protein = 0.0
-        var fat = 0.0
-        for (ingredient in ingredients) {
-            energy += ingredient.food.nutrition.energy * ingredient.amount / 100
-            carbohydrate += ingredient.food.nutrition.carbohydrate * ingredient.amount / 100
-            protein += ingredient.food.nutrition.protein * ingredient.amount / 100
-            fat += ingredient.food.nutrition.fat * ingredient.amount / 100
-        }
-        create_meal_energy.text = String.format("%.2f kcal", energy)
-        create_meal_carbohydrate.text = String.format("%.2f g", carbohydrate)
-        create_meal_protein.text = String.format("%.2f g", protein)
-        create_meal_fat.text = String.format("%.2f g", fat)
-    }
 
     override fun onActivityResult(
         requestCode: Int,
@@ -309,71 +236,129 @@ class CreateMeal : AppCompatActivity(), OnEditTextChanged, OnDeleteButtonPressed
 
 
     private fun setListeners() {
-//        create_meal_listView.onItemClickListener =
-//            AdapterView.OnItemClickListener { parent, view, position, id ->
-//                create_meal_listView.adapter = null
-//
-//                val food = foodList[position]
-//                Log.d(TAG, food.toString())
-//                val ingredient = Ingredient(food, 0.0)
-//
-//                ingredients.add(ingredient)
-//
-//                val adapter = IngredientAdapter(
-//                    this@CreateMeal,
-//                    R.layout.ingredient,
-//                    ingredients
-//                )
-//                create_meal_ingredients.adapter = adapter
-//            }
+        create_meal_submit.setOnClickListener {
+            postMeal(buildMeal())
+            cleanup()
+        }
+    }
 
-
+    private fun cleanup() {
+        ingredients.clear()
+        nutrition = Nutrition(0.0, 0.0, 0.0, 0.0)
+        create_meal_name.setText("Meal Name")
     }
 
     override fun onTextChanged(position: Int, charSeq: String?) {
         try {
+            Log.d(TAG, "SIZE: ${ingredients.size}")
+            Log.d(TAG, "INDEX: $position")
             ingredients[position].amount = charSeq!!.toDouble()
-        } catch (e: NumberFormatException) {
-
+        } catch (e: IndexOutOfBoundsException) {
+            e.printStackTrace()
+        } catch (e: Exception){
+            e.printStackTrace()
         }
-        recalcuralteNutrition()
-
+        recalculateNutrition()
     }
 
-    private fun recalcuralteNutrition() {
-        var energy = 0.0
-        var carbs = 0.0
-        var protein = 0.0
-        var fat = 0.0
+    private fun recalculateNutrition() {
+        if (ingredients.size > 0) {
+            var energy = 0.0
+            var carbs = 0.0
+            var protein = 0.0
+            var fat = 0.0
+            var amount = 0.0
+            Log.d(TAG, ingredients.toString())
 
+            for (ingredient in ingredients) {
+                energy += ingredient.food.nutrition.energy / 100 * ingredient.amount
+                carbs += ingredient.food.nutrition.carbohydrate / 100 * ingredient.amount
+                protein += ingredient.food.nutrition.protein / 100 * ingredient.amount
+                fat += ingredient.food.nutrition.fat / 100 * ingredient.amount
+                amount += ingredient.amount
+            }
 
-        for (ingredient in ingredients) {
-            energy += ingredient.food.nutrition.energy * ingredient.amount / 100
-            carbs += ingredient.food.nutrition.carbohydrate * ingredient.amount / 100
-            protein += ingredient.food.nutrition.protein * ingredient.amount / 100
-            fat += ingredient.food.nutrition.fat * ingredient.amount / 100
+            nutrition.energy = energy / amount * 100
+            nutrition.carbohydrate = carbs / amount * 100
+            nutrition.protein = protein / amount * 100
+            nutrition.fat = fat / amount * 100
+        } else {
+            nutrition = Nutrition(0.0, 0.0, 0.0, 0.0)
         }
 
-        nutrition.energy = energy
-        nutrition.carbohydrate = carbs
-        nutrition.protein = protein
-        nutrition.fat = fat
         Log.d(TAG, nutrition.energy.toString())
         updateNutritionView()
     }
 
     override fun onDeleteButtonPressed(position: Int) {
+        Log.d(TAG, "DELETE POSITION: $position")
         ingredients.removeAt(position)
-        recalcuralteNutrition()
         ingredientAdapter.loadNewData(ingredients)
+        try {
+            recalculateNutrition()
+        } catch (e: Exception) {
+        }
     }
 
-    fun idAlreadyInIngredients(food: Food): Boolean{
-        for (ingredient in ingredients){
-            if (ingredient.food.id == food.id){
+    fun isAlreadyInIngredients(food: Food): Boolean {
+        for (ingredient in ingredients) {
+            if (ingredient.food.id == food.id) {
                 return true
             }
         }
         return false
+    }
+
+    fun buildMeal(): Food {
+        return Food(
+            name = create_meal_name.text.toString(),
+            nutrition = nutrition,
+            isMeal = true,
+            ean = "",
+            ingredients = ingredients.toTypedArray()
+        )
+    }
+
+    fun postMeal(food: Food) {
+
+        val authData = AuthHandler.getAuthData(this)
+
+        val json = Gson().toJson(food)
+        val client = OkHttpClient()
+        val requestBody = json.toRequestBody()
+        val request = Request.Builder()
+            .url(getString(R.string.BASE_URL) + "foodlist/1")
+            .method("POST", requestBody)
+            .addHeader(
+                "Authorization",
+                authData.token
+            )
+            .addHeader("userId", authData.userId)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+
+                    if (response.isSuccessful) {
+                        val resString = response.body!!.string()
+                        Log.d("Response", resString)
+                        startActivity(Intent(this@CreateMeal, MainActivity::class.java))
+                    } else {
+                        runOnUiThread {
+                            Toast.makeText(
+                                this@CreateMeal,
+                                "could not create meal",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+            }
+        })
     }
 }
